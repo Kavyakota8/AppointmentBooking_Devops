@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo 'Fetching the latest code from GitHub...'
-                git branch: 'main', url: 'https://github.com/your-github-username/Appointment-Booking-System.git'
+                git branch: 'main', url: 'https://github.com/Kavyakota8/AppointmentBooking_Devops.git'
             }
         }
 
