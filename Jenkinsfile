@@ -1,62 +1,40 @@
-pipeline {
+pipeline{
     agent any
-
-    environment {
-        DOCKER_IMAGE = 'kavyakota18/appointment-booking:latest'
-        DOCKERHUB_CREDENTIALS = 'dockerhub-creds'   // Jenkins credential ID for Docker Hub login
-    }
-
-    stages {
-        stage('Checkout Code') {
-            steps {
-                echo 'Fetching the latest code from GitHub...'
-                git branch: 'main', url: 'https://github.com/Kavyakota8/AppointmentBooking_Devops.git'
+    stages{
+        stage ("Build Docker Image"){
+            steps{
+                echo "Build Docker Image"
+                bat "docker build -t kubeapp:v2 ."
             }
         }
-
-        stage('Build Docker Image') {
-            steps {
-                echo 'Building Docker image for Appointment Booking System...'
-                script {
-                    docker.build(DOCKER_IMAGE)
-                }
+        stage ("Docker Login"){
+            steps{
+                bat "docker login -u kavyakota18 -p Bkt@kota18"
             }
         }
-
-        stage('Push Docker Image') {
+        stage("push Docker Iamge to Docker Hub"){
             steps {
-                echo 'Pushing Docker image to Docker Hub...'
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
-                        docker.image(DOCKER_IMAGE).push()
-                    }
-                }
+                echo "push Docker Image to docker hub"
+                bat "docker tag kubeapp:v2 kavyakota18/smartapp:latest"
+                bat "docker push kavyakota18/smartapp:latest"
+
+
             }
         }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                echo 'Applying Kubernetes manifests (deployment & service)...'
-                sh 'kubectl apply -f deployment.yaml'
-                sh 'kubectl apply -f service.yaml'
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                echo 'Verifying that the deployment and service are running...'
-                sh 'kubectl get pods'
-                sh 'kubectl get svc'
+        stage("Deploy to Kubernetes"){
+            steps{
+                bat "kubectl apply -f deployment.yaml --validate=false"
+                bat "kubectl apply -f service.yaml"
             }
         }
     }
+    post{
+        success{
+            echo 'Pipeline completed scucessfull!'
 
-    post {
-        success {
-            echo '✅ Appointment Booking System Deployed Successfully!'
         }
-        failure {
-            echo '❌ Pipeline Failed! Please check the Jenkins logs for details.'
+        failure{
+            echo "Pipeline failed.Please check the logs."
         }
     }
 }
