@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Book Appointment</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Book Your Appointment</h1>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+          {% for category, msg in messages %}
+            <div class="alert {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="{{ url_for('book') }}">
+      <label>Name *</label>
+      <input type="text" name="name" required>
+
+      <label>Email</label>
+      <input type="email" name="email">
+
+      <label>Phone</label>
+      <input type="text" name="phone">
+
+      <label>Service Type</label>
+      <select name="service">
+        <option value="General Consultation">General Consultation</option>
+        <option value="Health Checkup">Health Checkup</option>
+        <option value="Follow-up">Follow-up</option>
+      </select>
+
+      <label>Appointment Date & Time</label>
+      <input type="datetime-local" name="appointment_datetime" required>
+
+      <button type="submit">Confirm Booking</button>
+    </form>
+
+    <p><a href="{{ url_for('index') }}" class="btn">Back to Home</a></p>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Appointment System</p>
+  </footer>
+</body>
+</html>
