@@ -1,28 +1,21 @@
-
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: appointment-deployment
-  labels:
-    app: appointment-system
+  name: kubeapp-deployment
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
-      app: appointment-system
+      app: kubeapp
   template:
     metadata:
       labels:
-        app: appointment-system
+        app: kubeapp
     spec:
       containers:
-        - name: appointment-container
-          image: your-dockerhub-username/appointment-booking:latest
-          ports:
-            - containerPort: 5000
-          env:
-            - name: FLASK_APP
-              value: app.py
-            - name: FLASK_RUN_HOST
-              value: 0.0.0.0
+      - name: kubeapp
+        image: kavyakota18/smartapp:latest
+
+        ports:
+
+        - containerPort: 5000
